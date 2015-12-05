@@ -75,7 +75,7 @@ var players = [
 var finishedRequest = [];
 var rqs = 0;
 function init(){
-	fisab = new Worker('ai/fisab.js');
+	fisab = new Worker('ii/fisab.js');
 	//var findoff = new Worker('ai/findoff.js');
 	fisab.postMessage(players[0]);
 	//findoff.postMessage(players[1]);
@@ -129,19 +129,19 @@ function sendAllInfo(){
 var withoutCollisionTop = 0;
 function moveForward(player){
 	for(var terrain of terrains){
-		if(	player.pos[0]-50 > terrain.pos[0]+terrain.size[0] &&
-			player.pos[0]-50 < terrain.pos[0] &&
-			player.pos[1]+25 > terrain.pos[1]+terrain.size[1] &&
+		if(	(player.pos[0]-25 > terrain.pos[0]+terrain.size[0]) ||
+			player.pos[0]+25 < terrain.pos[0] &&
+			player.pos[1]+25 > terrain.pos[1]+terrain.size[1] ||
 			player.pos[1]-25 < terrain.pos[1]
 			){
 			withoutCollisionTop++;
 		}
 	}
-	//if(withoutCollisionTop == terrains.length){
+	if(withoutCollisionTop == terrains.length){
 		withoutCollisionTop = 0;
 		player.pos[0] -= Math.cos(player.angle)*velocity.drive;
 		player.pos[1] -= Math.sin(player.angle)*velocity.drive;
-	//}
+	}
 }
 
 var withoutCollisionBot = 0;
@@ -282,20 +282,28 @@ function render(){
 
 	//for(var player of players){
 		player = players[0];
+
+	    ctx.save();
+	    ctx.beginPath();
+	    ctx.strokeStyle = '#4C3324';
+	    ctx.lineWidth = 25;
+	    ctx.translate(player.pos[0], player.pos[1]);
+	    ctx.rotate(player.angle);
+	    ctx.moveTo(0,0);
+	    ctx.lineTo(-25, 0);
+	    ctx.stroke();
+	    ctx.restore();
+
 		ctx.save();
 		ctx.beginPath();
 		ctx.lineWidth = 5;
 		ctx.strokeStyle = player.color;
 	    ctx.translate(player.pos[0], player.pos[1]);
 	    ctx.rotate(player.angle);
-		ctx.lineTo(-25, 20);
-		ctx.lineTo(-30, 0);
-		ctx.lineTo(-25, -20);
-		ctx.lineTo(40, -20);
-		ctx.lineTo(40, 20);
-		ctx.lineTo(-25, 20);
+	    ctx.strokeRect(-25,-25,50,50);
 	    ctx.stroke();
 	    ctx.restore();
+
 
 	    ctx.save();
 	    ctx.beginPath();
