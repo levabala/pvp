@@ -26,6 +26,7 @@ postMessage({action: ['moveBack','rotateRightGun', 'rotateRightBody']});
 7. `shoot` - Стрельба.
 
 Отправлять их стоит отвечая на сообщения движка, которое будет выглядить похожем на это:
+
 `Object { mePos: Array[2], visibleObj: Array[0], tick: 0 }`
 
 **Cервера будет присылать следующее:**
