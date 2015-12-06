@@ -3,7 +3,7 @@ addEventListener('message', function(e) {
 }, false);
 
 function loop(){
-	postMessage({action: ['moveForward','rotateRightGun', 'rotateRightBody']});
+	postMessage({action: ['moveBack','rotateRightGun', 'rotateRightBody']});
 }
 
 setInterval(function(){loop();}, 16);
