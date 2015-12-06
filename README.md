@@ -8,6 +8,7 @@
 5. Генерация мира и генерация позиции для спавна игроков
 
 **Вот пример отправки с ИИ на движок команд:**
+
 `
 postMessage({action: ['moveBack','rotateRightGun', 'rotateRightBody']});
 `
