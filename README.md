@@ -27,6 +27,8 @@ postMessage({action: ['moveBack','rotateRightGun', 'rotateRightBody']});
 6. `moveBack` - Движение назад.
 7. `shoot` - Стрельба.
 
+Вдальнейшем угл повороту будет изменяться ИИ и будет выставлен предел.
+
 Отправлять их стоит отвечая на сообщения движка, которое будет выглядить похожем на это:
 
 `Object { mePos: Array[2], visibleObj: Array[0], tick: 0 }`
