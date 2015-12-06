@@ -12,3 +12,13 @@
 `
 postMessage({action: ['moveBack','rotateRightGun', 'rotateRightBody']});
 `
+
+**Всего существует 7 команд:
+
+1. `rotateRightBody` - Поворачивать вправо.
+2. `rotateLeftBody` - Поворачивать влево.
+3. `rotateRightGun` - Поворачивать вправо пушку.
+4. `rotateLeftGun` - Поворачивать влево пушку.
+5. `moveForward` - Движение вперед.
+6. `moveBack` - Движение назад.
+7. `shoot` - Стрельба.
