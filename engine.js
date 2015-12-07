@@ -6,6 +6,8 @@ var fisab;
 var findoff;
 var levabala;
 
+var bullets = [];
+
 function initMap(terrains){
 	terrains.push({
 		type: 'wall',
@@ -47,7 +49,8 @@ var oldTick = -1;
 var velocity = {
 	gun: Math.PI/80,
 	rotate: Math.PI/200,
-	drive: 3.5
+	moveForward: 1.5,
+	moveBack: 1
 };
 
 var allInfo = {
@@ -64,7 +67,8 @@ var players = [
 		action: [], //действие, которое делает игрок
 		pos: [w/2, h/2], //править
 		order: 0,
-		numbOfAct: 0
+		numbOfAct: 0,
+		reload: 20
 	},
 	{
 		nick: 'findoff',
@@ -74,7 +78,8 @@ var players = [
 		action: [],
 		pos: [w/2, h/2], //править
 		order: 0,
-		numbOfAct: 0
+		numbOfAct: 0,
+		reload: 20
 	}
 ];
 
@@ -102,7 +107,7 @@ findoff.addEventListener('message', function(e) {
 
 
 function findObjForRadar(pos, angle, player){
-		ctx.save();//пример линии
+		ctx.save();
 	    ctx.beginPath();
 	    for(var i = 0; i < w; i++){
 			var x = Math.cos(angle + 0.5*Math.PI);
@@ -150,9 +155,9 @@ function sendAllInfo(){
 	}
 }
 
-function moveForward(player){
-	var dx = -Math.cos(player.angle)*velocity.drive;
-	var dy = -Math.sin(player.angle)*velocity.drive;
+function moveForward(player, vel){
+	var dx = -Math.cos(player.angle)*vel;
+	var dy = -Math.sin(player.angle)*vel;
 	var a = 0;
 	for(var terrain of terrains){
 		a++;
@@ -183,9 +188,9 @@ function moveForward(player){
 }
 
 var withoutCollisionBot = 0;
-function moveBack(player){
-	var dx = -Math.cos(player.angle)*velocity.drive;
-	var dy = -Math.sin(player.angle)*velocity.drive;
+function moveBack(player, vel){
+	var dx = -Math.cos(player.angle)*vel;
+	var dy = -Math.sin(player.angle)*vel;
 	var a = 0;
 	for(var terrain of terrains){
 		a++;
@@ -196,14 +201,6 @@ function moveBack(player){
 		var r = 25;
 		var txr = terrain.size[0];
 		var tyr = terrain.size[1];
-
-		for(var terrain of terrains)
-		{
-			for (var i = 0; i < w; i++) {
-
-			}
-		}
-
 		if( x + r - dx > tx &&
 			x - r - dx < tx + txr &&
 			y + r - dy > ty &&
@@ -255,15 +252,20 @@ function rotateBody(side, player){
 }
 
 function shoot(player){
-
+	player.reload --;
+	if (player.reload <= 0) {
+		bullets[bullets.length] = new bullet(player);
+		player.reload = 20;
+	}
 }
 
 function processAction(){//раскладывает по полкам все запросы аи и начинает их выполнение
 	/*
 	velocity
-		gun - Math.PI/8,
-		rotate - Math.PI/10,
-		drive - 0.5
+		gun: Math.PI/80,
+		rotate: Math.PI/200,
+		moveForward: 1.5,
+		moveBack: 1
 	*/
 	for(var player of players){
 		//var can = checkTicks(player);
@@ -276,7 +278,16 @@ function processAction(){//раскладывает по полкам все з�
 				//if(player.action && rqs == player.action.length){
 					finishedRequest.push(act);
 					rqs = 0;
-					switch(act){
+					for(var i of act){
+						if(i == ':'){
+							act = act.split(':');
+							break;
+						}
+					}
+					if(typeof (act) == 'string'){
+						act = [act];
+					}
+					switch(act[0]){
 						case 'rotateRightBody':
 							rotateBody('right', player);
 							player.order++;
@@ -294,11 +305,15 @@ function processAction(){//раскладывает по полкам все з�
 							player.order++;
 						break;
 						case 'moveForward':
-							moveForward(player);
+							if(act[1] > velocity.moveForward){act[1] = velocity.moveForward}
+							else if(act[1] < 0){act[1] = 0;}
+							moveForward(player, act[1]);
 							player.order++;
 						break;
 						case 'moveBack':
-							moveBack(player);
+							if(act[1] > velocity.moveForward){act[1] = velocity.moveForward}
+							else if(act[1] < 0){act[1] = 0;}
+							moveBack(player, act[1]);
 							player.order++;
 						break;
 						case 'shoot':
@@ -316,10 +331,16 @@ function processAction(){//раскладывает по полкам все з�
 }
 
 function process(){
-	for(var player of players){
-		//var player = players[0];
+	//for(var player of players){
+		var player = players[0];
 		findObjForRadar(player.pos, player.gunAngle, player);
 		//radar(player.pos, player.gunAngle, player);
+	//}
+	for(var bullet of bullets){
+		bullet.bulletProcess();
+		if(bullet.lifetime <= 0 || !bullet.checkCollision(terrains)) {
+			bullets.splice(bullet, 1);
+		}	
 	}
 	processAction();
 	sendAllInfo();
@@ -327,6 +348,16 @@ function process(){
 
 function render(){
 	ctx.clearRect(0,0, w,h);
+	for (var bullet of bullets){
+		ctx.save();
+		ctx.beginPath();
+		ctx.fillStyle = bullet.owner.color;
+		ctx.translate(bullet.pos.x, bullet.pos.y);
+		ctx.rotate(bullet.angle);
+		ctx.fillRect(0,0, 6, 20);
+		ctx.fill();
+		ctx.restore();
+	}
 	for(var terrain of terrains){
 		//if(terrain.type == 'wall'){
 			ctx.beginPath();
@@ -375,8 +406,9 @@ function render(){
 		ctx.lineTo(5, 45);
 		ctx.lineTo(5, 0);
 		ctx.lineTo(0, 0);
-	    ctx.fill();
+		ctx.fill();
 	    ctx.restore();
+
 	}
 }
 
