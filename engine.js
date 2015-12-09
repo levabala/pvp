@@ -107,33 +107,30 @@ findoff.addEventListener('message', function(e) {
 
 
 function findObjForRadar(pos, angle, player){
-		ctx.save();
-	    ctx.beginPath();
-	    for(var i = 0; i < w; i++){
-			var x = Math.cos(angle + 0.5*Math.PI);
-			var y = Math.sin(angle + 0.5*Math.PI);
-			ctx.lineTo(x*i+pos[0], y*i+pos[1]);
-		}
-		ctx.stroke();
-		ctx.restore();
-		for(var i = 0; i < w; i++){
-			var x = Math.cos(angle + 0.5*Math.PI);
-			var y = Math.sin(angle + 0.5*Math.PI);
-			for(var terrain of terrains){
+	//ctx.save();
+    //ctx.beginPath();
+	var x = Math.cos(angle + 0.5*Math.PI);
+	var y = Math.sin(angle + 0.5*Math.PI);
+    //for(var i = 0; i < w; i++){
+	//	ctx.lineTo(x*i+pos[0], y*i+pos[1]);
+	//}
+	//ctx.stroke();
+	//ctx.restore();
+	for(var i = 0; i < w; i++){
+		for(var terrain of terrains){
 			if(	x*i+pos[0] < terrain.pos[0]+terrain.size[0] &&
 				x*i+pos[0] > terrain.pos[0] &&
 				y*i+pos[1] > terrain.pos[1] &&
 				y*i+pos[1] < terrain.pos[1]+terrain.size[1]
-				){
+			){
 				var xD = x*i + pos[0];
 				var yD = y*i + pos[1];
-				var range = Math.sqrt(xD*xD+yD*yD); //ФИКСИТЬ
 				ctx.beginPath();
 				ctx.fillStyle = 'red';
 				ctx.arc(xD, yD, 10, 0, Math.PI*2, 0);
 				ctx.fill();
-				//if(player.nick == 'fisab'){visibleObj.fisab.push({type: terrain.type, pos: [x+i, y+i], range: range});}
-				//if(player.nick == 'findoff'){visibleObj.findoff.push({type: terrain.type, pos: [x+i, y+i], range: range})};
+				//if(player.nick == 'fisab'){visibleObj.fisab.push({type: terrain.type, pos: [x+i, y+i]});}
+				//if(player.nick == 'findoff'){visibleObj.findoff.push({type: terrain.type, pos: [x+i, y+i]})};
 				return;
 			}
 		}
