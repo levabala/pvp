@@ -1,17 +1,18 @@
 var canvas;
 var ctx;
 var players = [];
+var controlled = [];
 var bullets = [];
 var terrains = [];
-var keys = new Set();
+var keys = {};
+var deadPlayers = [];
 
 document.body.addEventListener('keyup', function(e){
-    keys.delete(e.which);
+    keys[e.which] = false;
 });
 
 document.body.addEventListener('keydown', function(e){
-    keys.add(e.which);
-    //left 37 down 40 right 39 up 38
+    keys[e.which] = true;
 });
 
 canvas = document.getElementById("canvas");
@@ -22,71 +23,114 @@ init();
 render();
 
 function init(){
+    //ctx.translate(w / 4, h / 4);
+    //ctx.scale(0.3,0.3);
     players = {
         fisab: new player('fisab', 200, 200, 'ii/fisab.js', '#FF6E19'), 
-        levabala: new player('levabala', 400,400, 'ii/levabala.js', '#008000')//тут только hex
+        levabala: new player('levabala', 400,400, 'ii/levabala.js', '#008000'),//тут только hex
+        findoff: new player('findoff', 600, 600, 'ii/findoff.js', '#FF00FF')
     };
 
+    controlled = {player1: players.fisab};
+
     terrains = [
-        new structure('wall', 0, 0, w-10, 20, 'purple'),
-        new structure('wall', w-20, 0, 20, h, 'brown'),
-        new structure('wall', 0, 0, 20, h-10, 'orange'),
-        new structure('wall', 0, h-20, w, 20, 'blue')
+        new structure('wall', 20, 20, w-20, 20, 'purple'),
+        new structure('wall', w-40, 0, 20, h, 'brown'),
+        new structure('wall', 20, 0, 20, h-10, 'orange'),
+        new structure('wall', 0, h-40, w, 20, 'blue'),
+        new structure('wall', 100, 120, 100, 50, 'blue')
     ];
 
+
+}
+
+function playerControl(player){
+    if(keys[37]){
+        player.rotate('left', 'gun');
+    }
+    if(keys[40]){
+        //down
+    }
+    if(keys[39]){
+        player.rotate('right', 'gun');
+    }
+    if(keys[38]){
+        //up
+    }
+    if(keys[87]){
+        player.move('forward', players, deadPlayers);
+    }
+    if(keys[83]){
+        player.move('backward', players, deadPlayers);
+    }
+    if(keys[65]){
+        player.rotate('left', 'body');
+    }
+    if(keys[68]){
+        player.rotate('right', 'body');
+    }
+    if(keys[32]){
+        var bullet = player.shoot();
+        if (bullet != false) bullets[bullets.length] = bullet;
+    }
 }
 
 function main(){
-    if(keys.has(37)){
-        players.fisab.rotate('left', 'body');
-    }
-    if(keys.has(40)){
-        players.fisab.move('backward', player);
-    }
-    if(keys.has(39)){
-        players.fisab.rotate('right', 'body');
-    }
-    if(keys.has(38)){
-        players.fisab.move('forward', players);
-    }
+    playerControl(players.fisab);
     for(var player in players){
         var pla = players[player];
+        pla.checkCollision(pla.pos.x, pla.pos.y, terrains, players, deadPlayers);
         pla.reload --;
-        pla.rotate('left', 'gun');
+        pla.wherePush = [];
         if(pla.nick == 'levabala'){
             pla.rotate('right', 'body');
-            pla.move('forward', players);
+            pla.rotate('left', 'gun');
+            pla.move('forward', players, deadPlayers);
         }
-        var bullet = pla.shoot();
-        if (bullet != false) bullets[bullets.length] = bullet;
+        //смерть:O
+        if(pla.hp <= 0){
+            deadPlayers.push(new deadPlayer(pla.nick, pla.pos.x, pla.pos.y, pla.bodyAngle, pla.color));
+            delete players[player];
+        }
     }
 
-    for(var bullet in bullets){
+    var count = 0;
+     for(var bullet in bullets){
         var bul = bullets[bullet];
-        if (bul.lifetime <= - 250) bullets.splice(bul, 1);
-        bul.bulletProcess();
-        var col = bul.checkCollision(terrains, players);
-
-        if (typeof col == 'object') console.log(col);
+        if(bul.inplayer == false) {
+            if (bul.lifetime <= -250) bullets.splice(count, 1);
+            bul.bulletProcess();
+            var col = bul.checkCollision(terrains, players);
+        }
+        count++;
     }
+    //players.fisab.radar(terrains, ctx);
 }
 
 function render(){
-    ctx.fillStyle = 'rgba(245,245,245,0.7)';
+    ctx.save();
+    ctx.fillStyle = 'rgba(245,245,245,0.35)';
+    //ctx.fillRect(-w * 2,-h * 2,w * 6,h * 6);
     ctx.fillRect(0,0,w,h);
-    for (var terrain in terrains){
+    for(var terrain in terrains){
         var ter = terrains[terrain];
         ter.drawYou(ctx);
     }
 
-    for (var player in players){
+    for(var player in players){
         var pla = players[player];
         pla.drawYou(ctx);
     }
-    for (var bullet in bullets) {
+
+    for(var deadPlayer of deadPlayers){
+        deadPlayer.drawYou(ctx);
+    }
+
+    for(var bullet in bullets) {
         var bul = bullets[bullet];
         bul.drawYou(ctx);
     }
+    ctx.restore();
 }
 
 function loop(){
@@ -94,4 +138,9 @@ function loop(){
     main();
 }
 
+function log(){
+
+}
+
 setInterval(function(){loop();}, 16);
+setInterval(function(){log();}, 160);
