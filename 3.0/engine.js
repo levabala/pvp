@@ -82,19 +82,12 @@ function init(){
             new pos(20,h-20),
             new pos(20,20),
             new pos(40,20),
-            new pos(40,h-20)
+            new pos(40,h-20),
         ]}, null, null, convertHex(getRandomColor(), 90), null, 100)
-        /*new structure('wall', {body:[
-            new pos(140,140),
-            new pos(165,150),
-            new pos(190,155),
-            new pos(190,300)
-
-        ]}, null, null, convertHex(getRandomColor(), 90), null, 100)*/
     ];
     players = [
-        new player('levabala', new pos(100,100), convertHex(getRandomColor(), 99), 'ai/levabala.js')
-        //new player('fisab', new pos(200,200), convertHex(getRandomColor(), 99))
+        new player('levabala', new pos(100,100), convertHex(getRandomColor(), 99), 'ai/levabala.js'),
+        new player('fisab', new pos(200,200), convertHex(getRandomColor(), 99))
     ];
     //ctx.translate(100,100);
     loop();
@@ -113,11 +106,12 @@ var crosses;
 function tick(){
     for(var i in players){
         var player = players[i];
-        playerControl(player);
+        if (player.controlled) playerControl(player);
         crosses = player.radar(terrains);
         player.slowdown();
         player.updatePosition();
         log.nl(player.getState());
+        getCrossingVandC(new circle(player.pos, player.size), terrains[0].vectors[0]);
     }
 }
 
@@ -125,7 +119,8 @@ function tick(){
 function render(){
     image.arrays = [terrains, players, bullets];
     image.paint();
-    ctx.strokeStyle = 'red';
+
+    /*ctx.strokeStyle = 'red';      //drawing a seeVector and crossing points
     ctx.beginPath();
     var sV= players[0].gun.seeVector;
     ctx.moveTo(sV.start.x, sV.start.y);
@@ -142,7 +137,7 @@ function render(){
         ctx.arc(pos.x, pos.y, 5, 0, Math.PI * 2, false);
     }
     ctx.closePath();
-    ctx.fill();
+    ctx.fill();*/
 }
 
 function playerControl(player){
@@ -169,4 +164,4 @@ function playerControl(player){
         if (bullet != false) bullets[bullets.length] = bullet;
     }
 }
-//setInterval(function(){loop();}, 16);
+setInterval(function(){loop();}, 16);

@@ -21,9 +21,9 @@ function player(nick, position, color, ai){
         }
     };
     this.gun = {
-        angle: 0,
+        angle: 0.1,
         vector: new Vector(this.pos, new pos(this.pos.x + this.size * 1.5, this.pos.y)),
-        seeVector: new Vector(this.pos, null, 0, this.seeDepth),
+        seeVector: new Vector(this.pos, null, 0.1, this.seeDepth),
         length: this.size * 1.5,
         points: [
             new pos(this.pos.x, this.pos.y),
@@ -51,7 +51,10 @@ function player(nick, position, color, ai){
             if (bodypart == 'body') this.bodyAngle -= this.velocity.rotateBody;
             else if (bodypart == 'gun') this.gun.angle -= this.velocity.rotateGun;
         }
-        this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
+        if (this.speed >= -this.velocity.braking * 2 && this.speed <= this.velocity.braking * 2) {
+            this.moveV = new Vector(this.pos, null, this.bodyAngle, 0);
+        }
+        else this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
         this.updateGun();
     };
 
@@ -64,14 +67,20 @@ function player(nick, position, color, ai){
             this.speed -= this.velocity.acceleration;
             if (this.speed < this.velocity.maxSpeed.backward) this.speed += this.velocity.acceleration * 2;
         }
-        this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
+        if (this.speed >= -this.velocity.braking * 2 && this.speed <= this.velocity.braking * 2) {
+            this.moveV = new Vector(this.pos, null, this.bodyAngle, 0);
+        }
+        else this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
         this.updateGun();
     };
 
     this.slowdown = function(){
-        if (this.speed >= 0) this.speed -= this.velocity.braking;
+        if (this.speed > 0) this.speed -= this.velocity.braking;
         else this.speed += this.velocity.braking;
-        this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
+        if (this.speed >= -this.velocity.braking * 2 && this.speed <= this.velocity.braking * 2) {
+            this.moveV = new Vector(this.pos, null, this.bodyAngle, 0);
+        }
+        else this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
     };
 
     this.radar = function(terrains, ctx){  //ctx is temporary variable

@@ -75,34 +75,24 @@ function Vector(start, end, angle, length){
             y = eq2.k * x +eq2.b;
             return {x: x, y: y};
         }
-        else if (eq2.k == 'Infinity') {
+        else if (eq2.k == 'Infinity' || eq2.k == '-Infinity') {
             x = vector.start.x;
             y = eq1.k * x + eq1.b;
-            //console.log(x + ' ' + y);
             return {x: x, y: y};
         }
 
         if (eq1.k - eq2.k != 0) x = (eq2.b - eq1.b) / (eq1.k - eq2.k);
         if (eq1.k - eq2.k != 0) y = eq1.k * x + eq1.b;
         else y = eq1.b;
+        if (x == 0) {
 
+        }
         var res = {x: x, y: y};
         this.checkCrossRange(res);
         return res;
     };
 
     this.checkCrossRange = function(p){
-        /*console.log('---')
-        console.log(p);
-        console.log(this.start);
-        console.log(this.end);*/
-        //console.log('---');
-        /*console.log((p.x > this.start.x) + ' ' + p.x + ' > ' + this.start.x);
-        console.log(p.x < this.end.x);
-        console.log(p.y > this.start.y);
-        console.log(p.y < this.end.y);*/
-        //console.log((p.x > this.start.x) && (p.x < this.end.x));
-
         return ((p.x > this.start.x && p.x < this.end.x && p.y > this.start.y && p.y < this.end.y) ||
             (p.x > this.end.x && p.x < this.start.x && p.y > this.end.y && p.y < this.start.y));
     };
