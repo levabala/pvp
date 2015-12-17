@@ -16,8 +16,8 @@ function player(nick, position, color, ai){
         acceleration: 0.1,
         braking: 0.05,
         maxSpeed: {
-            forward: 4,
-            backward: -2
+            forward: 8,
+            backward: -4
         }
     };
     this.gun = {
@@ -69,7 +69,7 @@ function player(nick, position, color, ai){
     };
 
     this.slowdown = function(){
-        if (this.speed > 0) this.speed -= this.velocity.braking;
+        if (this.speed >= 0) this.speed -= this.velocity.braking;
         else this.speed += this.velocity.braking;
         this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
     };
@@ -112,5 +112,15 @@ function player(nick, position, color, ai){
             type: 'head'
         };
         this.body = new structure('player', this.gun.points, this.pos, this.size, this.color, this.color, 100, [this.head]);
+    };
+
+    this.getState = function(){
+        var res = '';
+        res += '--- player \"' + this.nick + '\"' +
+            '\n|pos: (' + Math.floor(this.pos.x) + ', ' + Math.floor(this.pos.y) + ')' +
+            '\n|speed: ' + this.speed.toFixed(3) +
+            '\n|body angle: ' + this.bodyAngle +
+            '\n|gun angle: ' + this.gun.angle;
+        return res;
     };
 }

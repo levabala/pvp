@@ -84,11 +84,19 @@ function init(){
             new pos(40,20),
             new pos(40,h-20)
         ]}, null, null, convertHex(getRandomColor(), 90), null, 100)
+        /*new structure('wall', {body:[
+            new pos(140,140),
+            new pos(165,150),
+            new pos(190,155),
+            new pos(190,300)
+
+        ]}, null, null, convertHex(getRandomColor(), 90), null, 100)*/
     ];
     players = [
         new player('levabala', new pos(100,100), convertHex(getRandomColor(), 99), 'ai/levabala.js')
         //new player('fisab', new pos(200,200), convertHex(getRandomColor(), 99))
     ];
+    //ctx.translate(100,100);
     loop();
 }
 
@@ -96,6 +104,7 @@ function init(){
 //main loop
 function loop(){
     //console.warn('---------------new loop-------------');
+    log.logging();
     render();
     tick();
 }
@@ -108,6 +117,7 @@ function tick(){
         crosses = player.radar(terrains);
         player.slowdown();
         player.updatePosition();
+        log.nl(player.getState());
     }
 }
 
@@ -124,9 +134,11 @@ function render(){
     ctx.stroke();
     ctx.fillStyle = 'green';
     ctx.beginPath();
+    log.nl('crosses: ');
     for (var i in crosses)
     for (var c in crosses[i]){
         var pos = crosses[i][c];
+        log.nl('\n' + pos.x + ' ' + pos.y);
         ctx.arc(pos.x, pos.y, 5, 0, Math.PI * 2, false);
     }
     ctx.closePath();
@@ -157,4 +169,4 @@ function playerControl(player){
         if (bullet != false) bullets[bullets.length] = bullet;
     }
 }
-setInterval(function(){loop();}, 16);
+//setInterval(function(){loop();}, 16);

@@ -22,7 +22,8 @@ function structure(type, points, pos, size, colorF, colorS, hits, additionalPart
             this.drawBody = {
                 body: {
                     type: 'polygon',
-                    points: this.points.body
+                    points: this.points.body,
+                    colorS: this.colorF
                 }
             };
 
@@ -55,10 +56,15 @@ function structure(type, points, pos, size, colorF, colorS, hits, additionalPart
                 }
             };
 
-            for (var p = 0; p < this.points.length-1; p ++){
+            console.log('--------------' + this.drawBody.body.type);
+            for (var p = 0; p < this.points.length-1; p++){
                 var pointS = this.points[p];
                 var pointE = this.points[p + 1];
                 this.vectors[this.vectors.length] = new Vector(pointS, pointE);
+                var v = this.vectors[this.vectors.length-1];
+                console.log(v);
+                console.log(v.start);
+                console.log(v.end);
             }
             break;
         }

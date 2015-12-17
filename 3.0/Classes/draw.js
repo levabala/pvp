@@ -7,8 +7,8 @@ function draw(arrays, ctx){
 
     //functions
     this.paint = function() {
-        ctx.clearRect(0,0,this.width,this.height);
         ctx.save();
+        ctx.clearRect(-this.width,-this.height,this.width*2,this.height*2);
         for (var i in this.arrays) {
             var array = this.arrays[i];
             //console.log(array);
