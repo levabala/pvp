@@ -14,6 +14,7 @@ function player(nick, position, color, ai){
         rotateBody: 0.05,
         rotateGun: 0.05,
         acceleration: 0.1,
+        braking: 0.05,
         maxSpeed: {
             forward: 4,
             backward: -2
@@ -41,7 +42,7 @@ function player(nick, position, color, ai){
     if (ai == null) this.controlled = true;
 
     //functions
-    this.rotate = function(dir, bodypart){
+    this.rotate = function(bodypart, dir){
         if (dir == 'right') {
             if (bodypart == 'body') this.bodyAngle += this.velocity.rotateBody;
             else if (bodypart == 'gun') this.gun.angle += this.velocity.rotateGun;
@@ -50,6 +51,7 @@ function player(nick, position, color, ai){
             if (bodypart == 'body') this.bodyAngle -= this.velocity.rotateBody;
             else if (bodypart == 'gun') this.gun.angle -= this.velocity.rotateGun;
         }
+        this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
         this.updateGun();
     };
 
@@ -64,6 +66,12 @@ function player(nick, position, color, ai){
         }
         this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
         this.updateGun();
+    };
+
+    this.slowdown = function(){
+        if (this.speed > 0) this.speed -= this.velocity.braking;
+        else this.speed += this.velocity.braking;
+        this.moveV = new Vector(this.pos, null, this.bodyAngle, this.speed);
     };
 
     this.radar = function(terrains, ctx){  //ctx is temporary variable

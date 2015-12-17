@@ -78,7 +78,7 @@ function Vector(start, end, angle, length){
         else if (eq2.k == 'Infinity') {
             x = vector.start.x;
             y = eq1.k * x + eq1.b;
-            console.log(x + ' ' + y);
+            //console.log(x + ' ' + y);
             return {x: x, y: y};
         }
 

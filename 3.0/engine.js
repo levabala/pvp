@@ -6,12 +6,11 @@ var ctx;
 var image;
 var logwindow;
 var log;
-var keys;
+var keys = new Set();
 var players = [];
 var controlled = [];
 var bullets = [];
 var terrains = [];
-var keys = {};
 var deadPlayers = [];
 var mouseX = 100;
 var mouseY = 100;
@@ -24,11 +23,10 @@ document.onmousemove = function(e){
 };
 
 document.body.addEventListener('keyup', function(e){
-    keys[e.which] = false;
+    keys.delete(e.which);
 });
-
 document.body.addEventListener('keydown', function(e){
-    keys[e.which] = true;
+    keys.add(e.which);
 });
 
 //init the variables
@@ -104,13 +102,11 @@ function loop(){
 var crosses;
 //tick's actions
 function tick(){
-    for (var i in players){
+    for(var i in players){
         var player = players[i];
         playerControl(player);
-        //player.rotate('right', 'gun');
         crosses = player.radar(terrains);
-        //player.rotate('right', 'body');
-        //player.move('forward');
+        player.slowdown();
         player.updatePosition();
     }
 }
@@ -138,28 +134,27 @@ function render(){
 }
 
 function playerControl(player){
-    if(keys[37]){
-        player.rotate('left', 'gun');
+    if(keys.has(37)){
+        player.rotate('gun', 'left');
     }
-    if(keys[39]){
-        player.rotate('right', 'gun');
+    if(keys.has(39)){
+        player.rotate('gun', 'right');
     }
-    if(keys[87]){
-        player.move('forward', players, deadPlayers);
+    if(keys.has(87)){
+        player.move('forward');
     }
-    if(keys[83]){
-        player.move('backward', players, deadPlayers);
+    if(keys.has(83)){
+        player.move('backward');
     }
-    if(keys[65]){
-        player.rotate('left', 'body');
+    if(keys.has(65)){
+        player.rotate('body', 'left');
     }
-    if(keys[68]){
-        player.rotate('right', 'body');
+    if(keys.has(68)){
+        player.rotate('body', 'right');
     }
-    if(keys[32]){
+    if(keys.has(32)){
         var bullet = player.shoot();
         if (bullet != false) bullets[bullets.length] = bullet;
     }
 }
 setInterval(function(){loop();}, 16);
-

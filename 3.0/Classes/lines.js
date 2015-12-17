@@ -46,12 +46,12 @@ function getCrossing(kb1, kb2, vector1, vector2){
     var x = 0;
     var y = 0;
 
-    if (kb1.k == 'Infinity') console.log('infinity!');
+   // if (kb1.k == 'Infinity') console.log('infinity!');
 
     if (kb1.k - kb2.k != 0) x = (kb2.b - kb1.b) / (kb1.k - kb2.k);
     else x = vector1.x1;
 
-    console.log(kb1.k + ' ' + x + ' ' + kb1.b);
+    //console.log(kb1.k + ' ' + x + ' ' + kb1.b);
     if (kb1.k - kb2.k != 0) y = kb1.k * x + kb1.b;
     else y = kb1.b;
 
