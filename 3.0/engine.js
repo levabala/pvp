@@ -120,7 +120,7 @@ function render(){
     image.arrays = [terrains, players, bullets];
     image.paint();
 
-    /*ctx.strokeStyle = 'red';      //drawing a seeVector and crossing points
+    /*ctx.strokeStyle = 'red';      //drawing a seeVector and crossing points (don't delete!!!)
     ctx.beginPath();
     var sV= players[0].gun.seeVector;
     ctx.moveTo(sV.start.x, sV.start.y);
