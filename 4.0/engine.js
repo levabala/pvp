@@ -25,6 +25,7 @@ document.body.addEventListener('keydown', function(e){
 //initialisation
 init();
 function init(){
+    console.clear();
     var c = document.getElementById("canvas");
     var ctx = c.getContext('2d');
     ctx.width = c.width;
@@ -49,23 +50,27 @@ function init(){
         new player('lev', new pos(100,100), 'orange')
     ];
 
-
-
-    image.paint();
+    loop();
 }
 
 function loop(){
+    log.logging();
     render();
     main();
-    control();
 }
 
 function main(){
-
+    for (var p in objects.players){
+        var player = objects.players[p];
+        control(player);
+        player.tick();
+        log.nl(player.vectors.moveV.length)
+    }
 }
 
 function render(){
-
+    image = new draw(objects, canvas.ctx);
+    image.paint(true);
 }
 
 function control(player){
@@ -76,10 +81,22 @@ function control(player){
         player.rotate('gun', 'right');
     }
     if(ks.isDown(87)){
-        player.move('forward');
+        var input = {
+            type: 'moving',
+            command: {
+                acc: 'const'
+            }
+        };
+        player.command(input);
     }
     if(ks.isDown(83)){
-        player.move('backward');
+        var input = {
+            type: 'moving',
+            command: {
+                acc: '-const'
+            }
+        };
+        player.command(input);
     }
     if(ks.isDown(65)){
         player.rotate('body', 'left');

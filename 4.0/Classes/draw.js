@@ -7,6 +7,8 @@ function draw(arrays, ctx){
 
     //functions
     this.paint = function(c){
+        ctx.save();
+        ctx.clearRect(0,0,this.width,this.height);
         if(!c) console.group('--- Arrays ---');
         for (var ar in arrays){  //getting current array
             var array = arrays[ar];
@@ -52,7 +54,9 @@ function draw(arrays, ctx){
                         ctx.fillStyle = object.colorF;
 
                         //the arc fitting
+                        ctx.beginPath();
                         ctx.arc(circle.pos.x, circle.pos.y, circle.size, 0, Math.PI * 2, false);
+                        ctx.closePath();
 
                         //coloring
                         ctx.stroke();
@@ -64,5 +68,6 @@ function draw(arrays, ctx){
             if(!c) console.groupEnd();
         }
         if(!c) console.groupEnd();
+        ctx.restore();
     };
 }
