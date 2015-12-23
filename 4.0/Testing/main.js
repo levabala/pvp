@@ -18,27 +18,20 @@ console.log('Object\'s pressure on the ground: ' +  obj.pressure + 'H');
 console.log('Object\'s mass: ' +  obj.mass + 'kg');
 console.log('Object\'s angle: ' +  obj.angle + 'radians');
 
-obj.vectors.external[0] = new Vector(obj.pos, null, Math.PI, 1);
+//obj.vectors.external[0] = new Vector(obj.pos, null, 0, 20);
 
-ctx.translate(-canvas.w/2,-canvas.h/2);
-ctx.scale(2,2);
+ctx.translate(-canvas.w,-canvas.h);
+ctx.scale(3,3);
 
 loop();
 
 function loop(){
-    log.logging();
-
-    if (ks.isDown(87) )obj.accelerate();
-    if (ks.isDown(83) )obj.brake();
+    if (ks.isDown(87)) obj.accelerate();
+    if (ks.isDown(83)) obj.brake();
+    if (ks.isDown(65)) obj.toLeft();
+    if (ks.isDown(68)) obj.toRight();
 
     obj.tick();
-
-    log.nl('Blue: The object\nBlack: Thrust vector\nRed: Acceleration vector');
-    log.nl(
-        'Thrust.length = ' + obj.vectors.thrust.length +
-        '\nBraking.length = ' + obj.vectors.braking.length +
-        '\nMoving.length = ' + obj.vectors.moving.length
-    );
 
     ctx.lineWidth = 2;
     ctx.save();
@@ -54,6 +47,7 @@ function loop(){
     ctx.lineTo(obj.vectors.thrust.end.x, obj.vectors.thrust.end.y);
     ctx.closePath();
     ctx.stroke();
+    ctx.lineWidth = 1;
     ctx.strokeStyle = 'red';
     ctx.beginPath();
     ctx.moveTo(obj.vectors.acceleration.start.x, obj.vectors.acceleration.start.y);
@@ -61,6 +55,7 @@ function loop(){
     ctx.closePath();
     ctx.stroke();
     ctx.restore();
+    ctx.lineWidth = 1;
     for (var v in obj.vectors.external) {
         ctx.strokeStyle = 'darkgreen';
         ctx.beginPath();
@@ -71,4 +66,17 @@ function loop(){
     }
 }
 
+function logging(){
+    log.nl('Blue: The object\nBlack: Thrust vector\nRed: Acceleration vector');
+    log.nl(
+        'Thrust.length = ' + obj.vectors.thrust.length +
+        '\nBraking.length = ' + obj.vectors.braking.length +
+        '\nMoving.length = ' + obj.vectors.moving.length +
+        '\nEngine\'s speed = ' + obj.engine.speed +
+        '\nAcceleration of engine = ' + obj.acc
+    );
+    log.logging();
+}
+
 setInterval(function(){loop();}, 16);
+setInterval(function(){logging();}, 160);

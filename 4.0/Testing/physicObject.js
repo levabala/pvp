@@ -58,6 +58,8 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
     }
     this.mass = this.volume * this.density;
     this.pressure = this.mass * this.G;
+    this.k = 2;   //the level of lowing
+    this.acc = 0;
 
     //third level (vectors)
     this.vectors = {};
@@ -68,15 +70,23 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
     this.vectors.braking = new Vector(this.pos, this.pos);                                        //Braking force = N * frictionCoeff  N = mass * G   G = 9.8
 
     this.tick = function(){
+        this.vectors.thrust = new Vector(this.pos, this.pos);
+
         if (this.engine.direction == 'forward') this.engine.speed += this.engine.acceleration;
         else if (this.engine.direction == 'backward') this.engine.speed -= this.engine.acceleration;
         else {
-            if (this.engine.speed > 0) this.engine.speed -= this.engine.braking;
-            else if (this.engine.speed < 0) this.engine.speed += this.engine.braking;
+            if (this.engine.speed > 0) {
+                this.engine.speed -= this.engine.braking;
+            }
+            else if (this.engine.speed < 0) {
+                this.engine.speed += this.engine.braking;
+            }
         }
 
         if (this.engine.speed > this.engine.maxSpeed.forward) this.engine.speed = this.engine.maxSpeed.forward;
         else if (this.engine.speed < this.engine.maxSpeed.backward) this.engine.speed = this.engine.maxSpeed.backward;
+
+        //if (this.engine.speed != 0) this.acc = 10/this.engine.speed;
 
         this.vectors.acceleration = new Vector(this.pos, null, this.angle, this.engine.speed);
 
@@ -101,6 +111,14 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
 
     this.brake = function(){
         this.engine.direction = 'backward';
+    };
+
+    this.toLeft = function(){
+        this.angle -= this.engine.rotateSpeed;
+    };
+
+    this.toRight= function(){
+        this.angle += this.engine.rotateSpeed;
     };
 
     this.showState = function(){

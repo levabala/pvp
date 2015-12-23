@@ -11,3 +11,7 @@ function convertHex(hex,opacity){
     var result = 'rgba('+r+','+g+','+b+','+opacity/100+')';
     return result;
 }
+
+function pow(num, l){
+    return Math.pow(num, l);
+}
