@@ -1,4 +1,4 @@
-# pvp
+# physicObject.js
 That's a 2d-physics class.
 You can create new physicObject so:
 ``` JavaScript
