@@ -1,4 +1,4 @@
-function physicObject(position, type, density, size, engine, frictionCoeff, angle){
+function physicObject(position, type, stative, density, size, engine, frictionCoeff, angle){
     //start properties
     this.pos = position;            //{x: num, y: num}
     this.type = type;          //"cylinder" or "cube"
@@ -8,6 +8,7 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
     this.G = 9.8;              //free fall acceleration
     this.angle = angle;
     this.frictionCoeff = frictionCoeff;
+    this.stative = stative;
 
     //check properties
     for (var p in this){
@@ -15,7 +16,8 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
         if (typeof obj == 'undefined' || obj == null){
             switch (p){
                 case 'position':
-                case 'type':{
+                case 'type':
+                {
                     console.error('Invalid property! ' + p + ' is ' + obj);
                     delete this;    //self-destruction
                     break;
@@ -28,17 +30,21 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
                     this.size = {x: 1, y: 1, z: 1};
                     break;
                 }
-                case 'engine': {
-                    this.engine = {acceleration: 0.2, rotateSpeed: 0.025, maxSpeed: {forward: 1, backward: -1}, speed: 0, direction: 'none', braking: 0.1};
-                    break;
-                }
-                case 'frictionCoeff': {
-                    this.frictionCoeff = 0.01;
-                    break;
-                }
-                case 'angle': {
-                    this.angle = 0;
-                    break;
+            }
+            if (!stative){
+                switch (p){
+                    case 'engine': {
+                        this.engine = {acceleration: 0.2, rotateSpeed: 0.025, maxSpeed: {forward: 1, backward: -1}, speed: 0, direction: 'none', braking: 0.1};
+                        break;
+                    }
+                    case 'frictionCoeff': {
+                        this.frictionCoeff = 0.01;
+                        break;
+                    }
+                    case 'angle': {
+                        this.angle = 0;
+                        break;
+                    }
                 }
             }
         }
@@ -59,14 +65,17 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
     this.mass = this.volume * this.density;
     this.pressure = this.mass * this.G;
 
-    //third level (vectors)
-    this.vectors = {};
-    this.vectors.external = [];                                       //the array of external vectors (forces from other objects)
-    this.vectors.moving = new Vector(this.pos, this.pos);             //the vector of moving
-    this.vectors.thrust = new Vector(this.pos, this.pos);             //general thrust
-    this.vectors.acceleration = new Vector(this.pos, this.pos);       //the acceleration from engine
-    this.vectors.braking = new Vector(this.pos, this.pos);            //Braking force = N * frictionCoeff  N = mass * G   G = 9.8
+    if (!this.stative) {
+        //third level (vectors)
+        this.vectors = {};
+        this.vectors.external = [];                                       //the array of external vectors (forces from other objects)
+        this.vectors.moving = new Vector(this.pos, this.pos);             //the vector of moving
+        this.vectors.thrust = new Vector(this.pos, this.pos);             //general thrust
+        this.vectors.acceleration = new Vector(this.pos, this.pos);       //the acceleration from engine
+        this.vectors.braking = new Vector(this.pos, this.pos);            //Braking force = N * frictionCoeff  N = mass * G   G = 9.8
+    }
 
+    //tick for dynamic object
     this.tick = function(){
         //reset the thrust
         this.vectors.thrust = new Vector(this.pos, this.pos);
@@ -103,10 +112,11 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
         }
         else this.vectors.thrust = new Vector(this.pos, this.pos);
 
-        //reset the engine's accelerate direction
+        //reset the engine's accelerate direction and external vectors
         this.engine.direction = 'none';
+        this.vectors.external = [];
 
-        //MOVE!
+        //MOVE!  I should move it out
         this.updatePos();
     };
 
@@ -126,6 +136,7 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
         this.angle += this.engine.rotateSpeed;
     };
 
+    //simple function
     this.showState = function(){
         console.group('State of object');
         for (var p in this){

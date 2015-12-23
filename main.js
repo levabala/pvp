@@ -11,14 +11,15 @@ document.body.addEventListener('keydown', function(e){
     ks.down(e.which);
 });
 
-var obj = new physicObject(new pos(400,400), 'cylinder', 0.2, {x:5, y: 5, z: 1},
+var obj = new physicObject(new pos(400,400), 'cylinder', false, 0.2, {x:5, y: 5, z: 1},
     {acceleration: 0.1, rotateSpeed: 0.05, maxSpeed: {forward: 4, backward: -1}, speed: 0, braking: 0.1}, 0.01, -0.3);
+
+var wall = new physicObject(new pos(500,500), 'cube', true, null, {x:25, y: 10, z: 4});
+wall.showState();
 
 console.log('Object\'s pressure on the ground: ' +  obj.pressure + 'H');
 console.log('Object\'s mass: ' +  obj.mass + 'kg');
 console.log('Object\'s angle: ' +  obj.angle + 'radians');
-
-//obj.vectors.external[0] = new Vector(obj.pos, null, 0, 20);
 
 ctx.translate(-canvas.w,-canvas.h);
 ctx.scale(3,3);
@@ -26,6 +27,8 @@ ctx.scale(3,3);
 loop();
 
 function loop(){
+    //obj.vectors.external[0] = new Vector(obj.pos, new pos(obj.pos.x + 2, obj.pos.y));
+
     if (ks.isDown(87)) obj.accelerate();
     if (ks.isDown(83)) obj.brake();
     if (ks.isDown(65)) obj.toLeft();
