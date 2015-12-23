@@ -58,20 +58,20 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
     }
     this.mass = this.volume * this.density;
     this.pressure = this.mass * this.G;
-    this.k = 2;   //the level of lowing
-    this.acc = 0;
 
     //third level (vectors)
     this.vectors = {};
-    this.vectors.external = [];                                                                   //the array of external vectors (forces from other objects)
-    this.vectors.moving = new Vector(this.pos, this.pos);                                         //the vector of moving
-    this.vectors.thrust = new Vector(this.pos, this.pos);                                         //general thrust
-    this.vectors.acceleration = new Vector(this.pos, this.pos);                                   //the acceleration from engine
-    this.vectors.braking = new Vector(this.pos, this.pos);                                        //Braking force = N * frictionCoeff  N = mass * G   G = 9.8
+    this.vectors.external = [];                                       //the array of external vectors (forces from other objects)
+    this.vectors.moving = new Vector(this.pos, this.pos);             //the vector of moving
+    this.vectors.thrust = new Vector(this.pos, this.pos);             //general thrust
+    this.vectors.acceleration = new Vector(this.pos, this.pos);       //the acceleration from engine
+    this.vectors.braking = new Vector(this.pos, this.pos);            //Braking force = N * frictionCoeff  N = mass * G   G = 9.8
 
     this.tick = function(){
+        //reset the thrust
         this.vectors.thrust = new Vector(this.pos, this.pos);
 
+        //actions with the engine's speed
         if (this.engine.direction == 'forward') this.engine.speed += this.engine.acceleration;
         else if (this.engine.direction == 'backward') this.engine.speed -= this.engine.acceleration;
         else {
@@ -82,27 +82,32 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
                 this.engine.speed += this.engine.braking;
             }
         }
-
         if (this.engine.speed > this.engine.maxSpeed.forward) this.engine.speed = this.engine.maxSpeed.forward;
         else if (this.engine.speed < this.engine.maxSpeed.backward) this.engine.speed = this.engine.maxSpeed.backward;
 
-        //if (this.engine.speed != 0) this.acc = 10/this.engine.speed;
-
+        //set the acceleration
         this.vectors.acceleration = new Vector(this.pos, null, this.angle, this.engine.speed);
 
+        //add the acceleration to thrust
         this.vectors.thrust.sumWith(this.vectors.acceleration, true);
         for (var v in this.vectors.external){
             var extV = this.vectors.external[v];
             this.vectors.thrust.sumWith(extV, true);
         }
 
+        //brake the object
         this.vectors.braking = new Vector(this.pos, null, this.vectors.thrust.angle + Math.PI, this.pressure * this.frictionCoeff);
         if (this.vectors.braking.length < this.vectors.thrust.length){
             this.vectors.moving = new Vector(this.pos, null, this.vectors.thrust.angle, this.vectors.thrust.length / this.mass); // Force = mass * acceleration
             this.vectors.thrust.sumWith(this.vectors.braking, true);
         }
+        else this.vectors.thrust = new Vector(this.pos, this.pos);
 
+        //reset the engine's accelerate direction
         this.engine.direction = 'none';
+
+        //MOVE!
+        this.updatePos();
     };
 
     this.accelerate = function(){
@@ -144,5 +149,10 @@ function physicObject(position, type, density, size, engine, frictionCoeff, angl
             }
         }
         console.groupEnd();
-    }
+    };
+
+    this.updatePos = function(){
+        this.pos.x += this.vectors.thrust.dx;
+        this.pos.y += this.vectors.thrust.dy;
+    };
 }

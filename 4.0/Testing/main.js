@@ -12,7 +12,7 @@ document.body.addEventListener('keydown', function(e){
 });
 
 var obj = new physicObject(new pos(400,400), 'cylinder', 0.2, {x:5, y: 5, z: 1},
-    {acceleration: 1.0, rotateSpeed: 0.05, maxSpeed: {forward: 10, backward: -5}, speed: 0, braking: 0.6}, null, -0.3);
+    {acceleration: 0.1, rotateSpeed: 0.05, maxSpeed: {forward: 4, backward: -1}, speed: 0, braking: 0.1}, 0.01, -0.3);
 
 console.log('Object\'s pressure on the ground: ' +  obj.pressure + 'H');
 console.log('Object\'s mass: ' +  obj.mass + 'kg');
@@ -38,7 +38,7 @@ function loop(){
     ctx.clearRect(0,0,canvas.w,canvas.h);
     ctx.fillStyle = 'blue';
     ctx.beginPath();
-    ctx.arc(obj.pos.x, obj.pos.x, 4, 0, Math.PI * 2, false);
+    ctx.arc(obj.pos.x, obj.pos.y, 4, 0, Math.PI * 2, false);
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = 'black';
@@ -54,7 +54,12 @@ function loop(){
     ctx.lineTo(obj.vectors.acceleration.end.x, obj.vectors.acceleration.end.y);
     ctx.closePath();
     ctx.stroke();
-    ctx.restore();
+    ctx.strokeStyle = 'red';
+    ctx.beginPath();
+    ctx.moveTo(obj.vectors.acceleration.start.x, obj.vectors.acceleration.start.y);
+    ctx.lineTo(obj.vectors.acceleration.end.x, obj.vectors.acceleration.end.y);
+    ctx.closePath();
+    ctx.stroke();
     ctx.lineWidth = 1;
     for (var v in obj.vectors.external) {
         ctx.strokeStyle = 'darkgreen';
@@ -64,6 +69,7 @@ function loop(){
         ctx.closePath();
         ctx.stroke();
     }
+    ctx.restore();
 }
 
 function logging(){
@@ -73,10 +79,10 @@ function logging(){
         '\nBraking.length = ' + obj.vectors.braking.length +
         '\nMoving.length = ' + obj.vectors.moving.length +
         '\nEngine\'s speed = ' + obj.engine.speed +
-        '\nAcceleration of engine = ' + obj.acc
+        '\nAcceleration.length = ' + obj.vectors.acceleration.length
     );
     log.logging();
 }
 
 setInterval(function(){loop();}, 16);
-setInterval(function(){logging();}, 160);
+setInterval(function(){logging();}, 16);
