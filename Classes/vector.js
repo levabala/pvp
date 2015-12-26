@@ -94,7 +94,7 @@ function Vector(start, end, angle, length, dx, dy){
     };
 
     this.checkCrossRange = function(p){
-        return ((p.x > this.start.x && p.x < this.end.x && p.y > this.start.y && p.y < this.end.y) ||
+        return ((p.x > this.start.x && p.x < this.end.x && p.y > this.start.y && p.y < this.end.y) ||    //isn't worked code!
             (p.x > this.end.x && p.x < this.start.x && p.y > this.end.y && p.y < this.start.y));
     };
 

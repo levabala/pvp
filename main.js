@@ -11,8 +11,8 @@ document.body.addEventListener('keydown', function(e){
     ks.down(e.which);
 });
 
-var obj = new physicObject(new pos(400,400), 'cylinder', false, 0.2, {x:5, y: 5, z: 1},
-    {acceleration: 0.1, rotateSpeed: 0.05, maxSpeed: {forward: 10, backward: -5}, speed: 0, braking: 0.1}, 0.01, -0.3);
+var obj = new physicObject(new pos(400,500), 'cylinder', false, 0.2, {x:25, y: 25, z: 1},
+    {acceleration: 0.5, rotateSpeed: 0.05, maxSpeed: {forward: 10, backward: -5}, speed: 0, braking: 0.1}, 0.0001, -0.3);
 
 var wall = new physicObject(new pos(500,500), 'cube', true, null, {x:25, y: 10, z: 4});
 wall.showState();
@@ -24,7 +24,7 @@ console.log('Object\'s angle: ' +  obj.angle + 'radians');
 //ctx.translate(200,200);
 //ctx.scale(0.5,0.5);
 
-var vector = new Vector(new pos(300,300), new pos(500,400));
+var vector = new Vector(new pos(0,0), new pos(1500,1400));
 vector.getCoefficients();
 console.log(vector.equation);
 
@@ -36,7 +36,6 @@ console.log(getRange(p1,vector));
 loop();
 
 function loop(){
-    var r = getRange(obj.pos,vector);
     //obj.vectors.external[0] = new Vector(obj.pos, new pos(obj.pos.x + 2, obj.pos.y));
 
     if (ks.isDown(87)) obj.accelerate();
@@ -46,15 +45,18 @@ function loop(){
 
     obj.tick();
 
-    ctx.lineWidth = 2;
+    var r = getRange(obj.pos,vector);
+
+    ctx.lineWidth = 4;
     ctx.save();
     ctx.clearRect(0,0,canvas.w,canvas.h);
-    ctx.fillStyle = 'blue';
+    ctx.strokeStyle = 'orange';
     ctx.beginPath();
-    ctx.arc(obj.pos.x, obj.pos.y, 4, 0, Math.PI * 2, false);
+    ctx.arc(obj.pos.x, obj.pos.y, obj.size.x, 0, Math.PI * 2, false);
     ctx.closePath();
-    ctx.fill();
+    ctx.stroke();
 
+    ctx.lineWidth = 2;
     ctx.strokeStyle = 'black';
     ctx.beginPath();
     ctx.moveTo(obj.vectors.thrust.start.x, obj.vectors.thrust.start.y);
@@ -99,8 +101,6 @@ function loop(){
     ctx.stroke();
 
     ctx.beginPath();
-    var point = getCrossingVandC(new circle(obj.pos, obj.size.x), vector);
-    ctx.arc(point.x, point.y, 15, 0, Math.PI * 2, false);
     ctx.arc(p1.x, p1.y, 15, 0, Math.PI * 2, false);
     ctx.closePath();
     ctx.fill();
@@ -116,7 +116,7 @@ function logging(){
         '\nEngine\'s speed = ' + obj.engine.speed +
         '\nAcceleration.length = ' + obj.vectors.acceleration.length
     );
-    log.nl('D1: ' + getCrossingVandC(new circle(obj.pos, obj.size.x), vector));
+    log.nl(checkCrossing(new circle(obj.pos, obj.size.x), vector));
     log.logging();
 }
 
