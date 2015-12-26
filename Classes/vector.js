@@ -1,5 +1,6 @@
 function Vector(start, end, angle, length, dx, dy){
     //basic properties
+    this.type = 'vector';
     this.start = start;
     this.end = end;
     this.angle = angle;

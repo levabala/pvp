@@ -1,4 +1,5 @@
 function pos(x,y){
+    this.type = 'position';
     this.x = x;
     this.y = y;
     this.sum = function(pos){

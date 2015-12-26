@@ -77,6 +77,7 @@ function physicObject(position, type, stative, density, size, engine, frictionCo
 
     //tick for dynamic object
     this.tick = function(){
+        if (this.stative) return;
         //reset the thrust
         this.vectors.thrust = new Vector(this.pos, this.pos);
 

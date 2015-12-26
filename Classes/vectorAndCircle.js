@@ -12,12 +12,15 @@ function getCrossingVandC(circle, vector){   //получение точки п�
     var y0 = circle.pos.y;
     var c = r * r + 2 * b * y0 - x0 * x0 - b * b - y0 * y0;
     //console.log('c: ' + c);
-    var D1 = (x0 - k * b + k * y0) ^ 2 - c * (k * k + 1);
+    var D1 = Math.pow((x0 - k * b + k * y0), 2) - c * (k * k + 1);
+
     //console.log(D1);
+    //return 'c: ' + c + ' k: ' + k;
+    //return (D1 + ' ' + (c * (k * k + 1)));
+
     var x = (x0 - k * b + k * y0 + Math.sqrt(D1)) / k * k + 1;
+    //return x0 + ' ' + k + ' ' + b + ' ' + y0 + ' ' + Math.sqrt(D1)
     var y = k * x + b;
 
-
-
-    //console.log({x: x, y: y});
+    return {x: x, y: y};
 }
