@@ -23,7 +23,8 @@ function getRange(obj1, obj2){
             var x = obj1.x;
             var y = obj1.y;
 
-            range = Math.abs(A * x + B * y + C) / Math.sqrt(A * A + B * B);
+            //range = Math.abs(A * x + B * y + C) / Math.sqrt(A * A + B * B);
+            range = (A * x + B * y + C) / Math.sqrt(A * A + B * B);
         }
     }
     else if (obj1.type == 'vector'){
@@ -35,7 +36,8 @@ function getRange(obj1, obj2){
             var x = obj2.x;
             var y = obj2.y;
 
-            range = Math.abs(A * x + B * y + C) / Math.sqrt(A * A + B * B);
+            //range = Math.abs(A * x + B * y + C) / Math.sqrt(A * A + B * B);
+            range = (A * x + B * y + C) / Math.sqrt(A * A + B * B);
         }
         else if (obj2.type == 'vector'){
             return false;
