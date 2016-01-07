@@ -19,12 +19,12 @@ function physicObject(position, mass, size, angle, colorS, colorF){
     };
 
     //set physics properties
-    this.frictionCoeff = 0.00001;
+    this.frictionCoeff = 0.001;
     this.G = 9.8;
     this.pressure = this.mass * this.G;
 
     //set an engine
-    this.engine = {acceleration: 0.2, rotateSpeed: 0.05, maxSpeed: {forward: 2.5, backward: -1.25}, speed: 0, braking: 0.025, direction: 'forward'};
+    this.engine = {acceleration: 0.2, rotateSpeed: 0.05, maxSpeed: {forward: 6.5, backward: -3.25}, speed: 0, braking: 0.025, direction: 'forward'};
 
     //functions
     this.accelerateTheEngine = function(){
@@ -59,7 +59,7 @@ function physicObject(position, mass, size, angle, colorS, colorF){
         //brake the object and set a move vector
         this.vectors.braking = new Vector(this.pos, null, this.vectors.thrust.angle + Math.PI, this.pressure * this.frictionCoeff);
         //console.log(this.pressure);
-        if (this.vectors.braking.length * 100 < this.vectors.thrust.length){
+        if (this.vectors.braking.length < this.vectors.thrust.length){
             this.vectors.thrust.sumWith(this.vectors.braking, true);
             this.vectors.moving = new Vector(this.pos, null, this.vectors.thrust.angle, this.vectors.thrust.length / this.mass); // Force = mass * acceleration
         }

@@ -21,7 +21,7 @@ document.body.addEventListener('keydown', function(e){
 });
 
 //preparation for start
-objects[objects.length] = new player(new pos(100,100), 200, {x: 20, y: 25, z: 1}, 0, 'orange', null, null, true);
+objects[objects.length] = new player(new pos(100,100), 200, {x: 20, y: 25, z: 1}, 0, '#ffa500', '#ffffff', null, true);
 
 //say "Hello" for users :)
 console.info('Hi! That\'s a version 6.0 of ATB project.\n\n');
