@@ -24,7 +24,7 @@ function physicObject(position, mass, size, angle, colorS, colorF){
     this.pressure = this.mass * this.G;
 
     //set an engine
-    this.engine = {acceleration: 0.2, rotateSpeed: 0.1, maxSpeed: {forward: 2.5, backward: -1.25}, speed: 0, braking: 0.025, direction: 'forward'};
+    this.engine = {acceleration: 0.2, rotateSpeed: 0.05, maxSpeed: {forward: 2.5, backward: -1.25}, speed: 0, braking: 0.025, direction: 'forward'};
 
     //functions
     this.accelerateTheEngine = function(){
