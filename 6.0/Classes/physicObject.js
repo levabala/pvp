@@ -24,7 +24,10 @@ function physicObject(position, mass, size, angle, colorS, colorF){
     this.pressure = this.mass * this.G;
 
     //set an engine
-    this.engine = {acceleration: 0.2, rotateSpeed: 0.05, maxSpeed: {forward: 6.5, backward: -3.25}, speed: 0, braking: 0.025, direction: 'forward'};
+    this.engine = {acceleration: 0.2, rotateSpeed: 0.05, maxSpeed: {forward: 4.5, backward: -3.25}, speed: 0, braking: 0.025, direction: 'forward'};
+
+    //set a presence zone of the object
+    this.presenceZone = new circle(this.pos, this.size.x);
 
     //functions
     this.accelerateTheEngine = function(){
@@ -76,6 +79,8 @@ function physicObject(position, mass, size, angle, colorS, colorF){
 
         this.pos.x += this.vectors.moving.dx;
         this.pos.y += this.vectors.moving.dy;
+
+        this.presenceZone = new circle(this.pos, this.size.x + this.vectors.moving.length);
     };
 
     this.accelerate = function(){

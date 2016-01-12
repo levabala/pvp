@@ -10,13 +10,14 @@ function player(position, mass, size, angle, colorS, colorF, ai, controlled){
     };
     this.ai = new Worker(ai);
     this.controlled = controlled;
+    this.type = 1; //player (index for collision checking)
 
     //set the pressure
     this.pressure = this.mass * this.G;
 
     //gun
     this.gun = {
-        angle: 0,
+        rotateSpeed: 0.025,
         length: 35,
         vector: new Vector(this.pos, null, 0, 35),
         realVector: new Vector(this.pos, null, 0, 35)
@@ -39,10 +40,12 @@ function player(position, mass, size, angle, colorS, colorF, ai, controlled){
         this.updatePos();
         this.rotateGunAfterTheBody();
         this.rotateTracksAfterTheBody();
-        this.updateTheTrail();
+        //this.updateTheTrail();             //it's not good made
     };
 
     this.render = function(ctx){
+        //not used part of the code
+        /*
         //drawing the trail
         ctx.beginPath();
 
@@ -66,7 +69,9 @@ function player(position, mass, size, angle, colorS, colorF, ai, controlled){
         if (this.color.stroke != null) ctx.stroke();
         if (this.color.fill != null) ctx.fill();
         ctx.closePath();
+        */
 
+        //drawing a body
         ctx.beginPath();
         ctx.lineWidth = 3;
         ctx.strokeStyle = this.color.stroke;
@@ -91,6 +96,7 @@ function player(position, mass, size, angle, colorS, colorF, ai, controlled){
         if (this.color.fill != null) ctx.fill();
         ctx.closePath();
 
+
         //change line width for tracks drawing
         ctx.beginPath();
         ctx.lineWidth = 6;
@@ -110,6 +116,14 @@ function player(position, mass, size, angle, colorS, colorF, ai, controlled){
 
     this.rotateGunAfterTheBody = function(){
         this.gun.realVector = new Vector(this.pos, null, this.gun.vector.angle + this.angle, this.gun.length);
+    };
+
+    this.rotateGunToLeft = function(){
+        this.gun.vector = new Vector(this.pos, null, this.gun.vector.angle - this.gun.rotateSpeed, this.gun.length);
+    };
+
+    this.rotateGunToRight= function(){
+        this.gun.vector = new Vector(this.pos, null, this.gun.vector.angle + this.gun.rotateSpeed, this.gun.length);
     };
 
     this.rotateTracksAfterTheBody = function(){
